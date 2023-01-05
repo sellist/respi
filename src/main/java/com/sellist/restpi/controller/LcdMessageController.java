@@ -1,33 +1,34 @@
 package com.sellist.restpi.controller;
 
-import com.sellist.restpi.dao.JdbcTestDao;
+import com.sellist.restpi.dao.JdbcLcdMessageDao;
 import com.sellist.restpi.model.LcdMessage;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
 @RestController
-public class TestController {
+public class LcdMessageController {
 
     @Autowired
-    JdbcTestDao testDao;
+    JdbcLcdMessageDao lcdMessageDao;
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
     public LcdMessage getMessageById(@PathVariable int id) {
-        return testDao.getMessageById(id);
+        return lcdMessageDao.getMessageById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/random")
     public LcdMessage getRandomMessage() {
-        return testDao.getRandomMessage();
+        return lcdMessageDao.getRandomMessage();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/")
-    public LcdMessage createNewMessage(@RequestBody LcdMessage newMessage) {
-        return testDao.create(newMessage);
+    public LcdMessage createNewMessage(@Valid @RequestBody LcdMessage newMessage) {
+        return lcdMessageDao.create(newMessage);
     }
 }

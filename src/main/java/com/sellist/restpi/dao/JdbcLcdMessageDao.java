@@ -6,11 +6,11 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 
 @Component
-public class JdbcTestDao {
+public class JdbcLcdMessageDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcTestDao(JdbcTemplate jdbcTemplate) {
+    public JdbcLcdMessageDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -26,7 +26,8 @@ public class JdbcTestDao {
         return output;
     }
 
-    public LcdMessage create(LcdMessage msg) {
+    public LcdMessage create(LcdMessage msg){
+
         String createSql = "INSERT INTO message (top_line, bottom_line) VALUES (?, ?) RETURNING message_id;";
         Integer newMessageId = jdbcTemplate.queryForObject(
                 createSql,
@@ -34,7 +35,6 @@ public class JdbcTestDao {
                 msg.getTopLine(),
                 msg.getBottomLine()
         );
-
         if (newMessageId != null) {
             return getMessageById(newMessageId);
         }
