@@ -3,6 +3,8 @@ from switch import Switch
 from machine import Pin, I2C
 from pico_i2c_lcd import I2cLcd
 import time
+import network
+import secrets
 
 board_led = Pin("LED", Pin.OUT)
 
@@ -10,6 +12,11 @@ board_led = Pin("LED", Pin.OUT)
 i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
 I2C_ADDR = i2c.scan()[0]
 lcd = I2cLcd(i2c, I2C_ADDR, 2, 16)
+
+#network setup
+wlan = network.WLAN(network.STA_IF)
+wlan.active(True)
+wlan.connect(secrets.SSID, secrets.PASSWORD)
 
 def main():
 
@@ -44,5 +51,7 @@ def main():
                 lcd.clear()
                 lcd.putstr("button off")
 
+def request_message():
+    pass
 
 main()

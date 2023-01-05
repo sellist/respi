@@ -22,6 +22,9 @@ public class JdbcLcdMessageDao {
         if (results.next()) {
             output.setTopLine(results.getString("top_line"));
             output.setBottomLine(results.getString("bottom_line"));
+        } else {
+            output.setTopLine("Error!");
+            output.setBottomLine("Error!");
         }
         return output;
     }
@@ -49,7 +52,11 @@ public class JdbcLcdMessageDao {
         if (results.next()) {
             output.setTopLine(results.getString("top_line"));
             output.setBottomLine(results.getString("bottom_line"));
+        }  else {
+            output.setTopLine("Error!");
+            output.setBottomLine("Error!");
         }
+
         return output;
     }
 }
