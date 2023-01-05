@@ -1,13 +1,15 @@
 import machine
 
-class Switch(): # pylint: disable=too-few-public-methods
+
+class Switch():  # pylint: disable=too-few-public-methods
     """Switch Class
     Class for defining a switch. Uses internal state to debounce switch in
     software. To use switch, check the "new_value_available" member and the
     "value" member from the application.
     sourced from https://github.com/selfhostedhome/micropython-debounce-switch
     """
-    def __init__(self, pin, checks=3, check_period=100):
+
+    def __init__(self, pin, checks=3, check_period=25):
         self.pin = pin
         self.pin.irq(handler=self._switch_change,
                      trigger=machine.Pin.IRQ_FALLING | machine.Pin.IRQ_RISING)
@@ -22,8 +24,6 @@ class Switch(): # pylint: disable=too-few-public-methods
 
     def _switch_change(self, pin):
         self.value = pin.value()
-
-        # Start timer to check for debounce
         self.debounce_checks = 0
         self._start_debounce_timer()
 
@@ -41,9 +41,6 @@ class Switch(): # pylint: disable=too-few-public-methods
             self.debounce_checks = self.debounce_checks + 1
 
             if self.debounce_checks == self.checks:
-                # Values are the same, debouncing done
-
-                # Check if this is actually a new value for the application
                 if self.prev_value != self.value:
                     self.new_value_available = True
                     self.prev_value = self.value
@@ -52,11 +49,8 @@ class Switch(): # pylint: disable=too-few-public-methods
                 self.pin.irq(handler=self._switch_change,
                              trigger=machine.Pin.IRQ_FALLING | machine.Pin.IRQ_RISING)
             else:
-                # Start the timer over to make sure debounce value stays the same
                 self._start_debounce_timer()
         else:
-            # Values are not the same, update value we're checking for and
-            # delay again
             self.debounce_checks = 0
             self.value = new_value
             self._start_debounce_timer()
