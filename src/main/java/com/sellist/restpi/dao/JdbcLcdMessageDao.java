@@ -1,7 +1,6 @@
 package com.sellist.restpi.dao;
 
-import com.sellist.restpi.model.TestEntry;
-import com.sellist.restpi.model.dto.NewTestMessageDto;
+import com.sellist.restpi.model.LcdMessage;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -15,20 +14,26 @@ public class JdbcTestDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public TestEntry getMessageById(int id) {
+    public LcdMessage getMessageById(int id) {
         String sql = "SELECT * FROM message WHERE ? = message_id;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, id);
-        TestEntry output = new TestEntry();
+        LcdMessage output = new LcdMessage();
 
         if (results.next()) {
-            output.setMessage(results.getString("text_message"));
+            output.setTopLine(results.getString("top_line"));
+            output.setBottomLine(results.getString("bottom_line"));
         }
         return output;
     }
 
-    public TestEntry create(NewTestMessageDto msg) {
-        String createSql = "INSERT INTO message (text_message) VALUES (?) RETURNING message_id;";
-        Integer newMessageId = jdbcTemplate.queryForObject(createSql, Integer.class, msg.getTextMessage());
+    public LcdMessage create(LcdMessage msg) {
+        String createSql = "INSERT INTO message (top_line, bottom_line) VALUES (?, ?) RETURNING message_id;";
+        Integer newMessageId = jdbcTemplate.queryForObject(
+                createSql,
+                Integer.class,
+                msg.getTopLine(),
+                msg.getBottomLine()
+        );
 
         if (newMessageId != null) {
             return getMessageById(newMessageId);
@@ -36,13 +41,14 @@ public class JdbcTestDao {
         return null;
     }
 
-    public TestEntry getRandomMessage() {
+    public LcdMessage getRandomMessage() {
         String sql = "SELECT * FROM message OFFSET floor(random() * (SELECT COUNT(*) from message)) LIMIT 1;";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
-        TestEntry output = new TestEntry();
+        LcdMessage output = new LcdMessage();
 
         if (results.next()) {
-            output.setMessage(results.getString("text_message"));
+            output.setTopLine(results.getString("top_line"));
+            output.setBottomLine(results.getString("bottom_line"));
         }
         return output;
     }

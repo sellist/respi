@@ -1,8 +1,7 @@
 package com.sellist.restpi.controller;
 
 import com.sellist.restpi.dao.JdbcTestDao;
-import com.sellist.restpi.model.TestEntry;
-import com.sellist.restpi.model.dto.NewTestMessageDto;
+import com.sellist.restpi.model.LcdMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,19 +15,19 @@ public class TestController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/{id}")
-    public TestEntry getMessageById(@PathVariable int id) {
+    public LcdMessage getMessageById(@PathVariable int id) {
         return testDao.getMessageById(id);
     }
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/random")
-    public TestEntry getRandomMessage() {
+    public LcdMessage getRandomMessage() {
         return testDao.getRandomMessage();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/")
-    public TestEntry createNewMessage(@RequestBody NewTestMessageDto newMessage) {
+    public LcdMessage createNewMessage(@RequestBody LcdMessage newMessage) {
         return testDao.create(newMessage);
     }
 }
