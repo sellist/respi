@@ -4,7 +4,12 @@ from machine import Pin, I2C
 from pico_i2c_lcd import I2cLcd
 import time
 import network
-import secrets
+import urequests
+import uasyncio
+
+_SSID = ""
+_PASS = ""
+_URL = ""
 
 board_led = Pin("LED", Pin.OUT)
 
@@ -16,13 +21,18 @@ lcd = I2cLcd(i2c, I2C_ADDR, 2, 16)
 #network setup
 wlan = network.WLAN(network.STA_IF)
 wlan.active(True)
-wlan.connect(secrets.SSID, secrets.PASSWORD)
+wlan.connect(_SSID, _PASS)
 
-def main():
+while not wlan.isconnected() and wlan.status() >= 0:
+    lcd.putstr("Waiting to\nconnect:")
+    time.sleep(1)
+    lcd.clear()
+
+async def main():
 
     switch_pin = machine.Pin(16, machine.Pin.IN, machine.Pin.PULL_DOWN)
     button_one = Switch(switch_pin)
-
+    print("here")
     lcd.clear()
     lcd.putstr("Pico LCD example")
     time.sleep(1)
@@ -46,12 +56,14 @@ def main():
         if my_switch_new_value:
             if my_switch_value:
                 lcd.clear()
-                lcd.putstr("button on")
+                thing = await request_message()
+                lcd.putstr(thing)
             else:
-                lcd.clear()
-                lcd.putstr("button off")
+                pass
+                #lcd.clear()
 
-def request_message():
-    pass
+async def request_message():
+    return urequests.get(_URL)
 
-main()
+print('hellohellohello')
+uasyncio.run(main())
